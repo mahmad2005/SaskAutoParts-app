@@ -40,18 +40,29 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Make</th><th>Model</th><th>Year</th><th>Part</th><th>Qty</th><th>Price (CAD)</th>
+        <th>ID</th><th>Make</th><th>Model</th><th>Year</th><th>Part</th><th>Qty</th><th>Price (CAD)</th><th>Order</th>
       </tr>
     </thead>
     <tbody>
       <% parts.forEach(p => { %>
         <tr>
+          <td><%= p.id %></td>
           <td><%= p.car_make %></td>
           <td><%= p.car_model %></td>
           <td><%= p.make_year %></td>
           <td><%= p.part_name %></td>
           <td><%= p.quantity %></td>
           <td><%= p.price_cad %></td>
+          <td>
+            <form method="post" action="/place-order">
+              <input type="hidden" name="part_id" value="<%= p.id %>">
+              <input type="hidden" name="part_name" value="<%= p.part_name %>">
+              <input type="number" name="order_quantity" min="1" max="<%= p.quantity %>" required class="form-control form-control-sm mb-1" placeholder="Qty">
+              <input type="text" name="caller_name" placeholder="Name" class="form-control form-control-sm mb-1" required>
+              <input type="text" name="caller_phone" placeholder="Phone" class="form-control form-control-sm mb-1" required>
+              <button type="submit" class="btn btn-sm btn-success">Order</button>
+            </form>
+          </td>
         </tr>
       <% }) %>
     </tbody>

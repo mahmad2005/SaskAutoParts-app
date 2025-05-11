@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <h1 class="mb-4">Orders</h1>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Order ID</th><th>Name</th><th>Phone</th><th>Part</th><th>Qty</th><th>Vehicle</th><th>Order Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(o => { %>
+        <tr>
+          <td><%= o.id %></td>
+		  <td><%= o.caller_name %></td>
+		  <td><%= o.caller_phone %></td>
+		  <td><%= o.part_name %></td>
+		  <td><%= o.part_id %></td> <!-- 👈 Add this -->
+		  <td><%= o.order_quantity %></td>
+		  <td><%= o.car_make %> <%= o.car_model %> <%= o.make_year %></td>
+		  <td><%= o.order_date.toLocaleString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
