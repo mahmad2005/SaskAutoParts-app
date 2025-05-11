@@ -111,6 +111,36 @@ app.get('/test-db', (req, res) => {
   });
 });
 
+// API for Gemini LLM
+
+app.post('/api/parts-query', express.json(), (req, res) => {
+  const { car_make, car_model, make_year, part_name } = req.body;
+
+  if (!car_make || !car_model || !make_year || !part_name) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  pool.query(
+    `SELECT quantity, price_cad FROM parts 
+     WHERE car_make = ? AND car_model = ? AND make_year = ? AND part_name = ?`,
+    [car_make, car_model, make_year, part_name],
+    (err, results) => {
+      if (err) {
+        console.error('DB error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+
+      if (results.length === 0) {
+        return res.json({ available: false, message: 'Not found' });
+      }
+
+      const { quantity, price_cad } = results[0];
+      return res.json({ available: true, quantity, price_cad });
+    }
+  );
+});
+
+
 
 
 app.listen(port, () => {
