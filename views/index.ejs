@@ -34,6 +34,8 @@
     </div>
     <div class="col-md-2">
       <button type="submit" class="btn btn-primary">Filter</button>
+	  <a href="/orders" class="btn btn-outline-secondary ms-2">View Orders</a>
+	  
     </div>
   </form>
 
@@ -53,7 +55,7 @@
           <td><%= p.part_name %></td>
           <td><%= p.quantity %></td>
           <td><%= p.price_cad %></td>
-          <td>
+<!--           <td>
             <form method="post" action="/place-order">
               <input type="hidden" name="part_id" value="<%= p.id %>">
               <input type="hidden" name="part_name" value="<%= p.part_name %>">
@@ -62,7 +64,7 @@
               <input type="text" name="caller_phone" placeholder="Phone" class="form-control form-control-sm mb-1" required>
               <button type="submit" class="btn btn-sm btn-success">Order</button>
             </form>
-          </td>
+          </td> -->
         </tr>
       <% }) %>
     </tbody>
