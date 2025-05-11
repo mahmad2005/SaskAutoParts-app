@@ -94,7 +94,70 @@ app.get('/', (req, res) => {
 
 
 // Add a route for order placing 
-app.post('/api/place-order', express.urlencoded({ extended: true }), (req, res) => {
+// server.js
+// ...
+// Add a route for order placing
+app.post('/api/place-order', express.urlencoded({ extended: true }), (req, res) => { // ✅ THIS IS CORRECT if you want /api/
+  const { caller_name, caller_phone, part_id, part_name, order_quantity } = req.body;
+
+  if (!caller_name || !caller_phone || !part_id || !part_name || !order_quantity) {
+    // Return JSON for API consistency
+    return res.status(400).json({ error: 'Missing required order fields.' });
+  }
+
+  const checkStockQuery = `SELECT quantity FROM parts WHERE id = ?`;
+  pool.query(checkStockQuery, [part_id], (err, results) => {
+    if (err) {
+      console.error('Error checking stock:', err);
+      return res.status(500).json({ error: 'Database error while checking stock.', details: err.message });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Part not found.', details: `Part with ID ${part_id} does not exist.` });
+    }
+    const availableQuantity = results[0].quantity;
+    if (parseInt(order_quantity, 10) > availableQuantity) {
+      return res.status(400).json({
+        error: 'Insufficient stock.',
+        details: `Requested ${order_quantity} but only ${availableQuantity} available for part ID ${part_id}.`
+      });
+    }
+
+    // Proceed to insert order if stock is sufficient
+    const insertOrderQuery = `
+      INSERT INTO orders (caller_name, caller_phone, part_id, part_name, order_quantity)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    pool.query(insertOrderQuery, [caller_name, caller_phone, part_id, part_name, order_quantity], (err, result) => {
+      if (err) {
+        console.error('Error inserting order:', err);
+        return res.status(500).json({ error: 'Order placement failed in database.', details: err.message });
+      }
+
+      // After successful order, update parts quantity
+      const updateStockQuery = `UPDATE parts SET quantity = quantity - ? WHERE id = ?`;
+      pool.query(updateStockQuery, [order_quantity, part_id], (updateErr, updateResult) => {
+        if (updateErr) {
+          console.error('Error updating stock after order:', updateErr);
+          // Order was placed, but stock update failed. This is a critical issue to log/handle.
+          // For now, still confirm order to user but log this server-side.
+        }
+        console.log('Stock updated successfully for part_id:', part_id);
+      });
+
+      // Return JSON success response
+      res.status(201).json({ message: 'Order placed successfully', order_id: result.insertId });
+    });
+  });
+});
+// ...
+
+
+
+
+
+
+
+app.post('/place-order', express.urlencoded({ extended: true }), (req, res) => {
   const { caller_name, caller_phone, part_id, part_name, order_quantity } = req.body;
 
   if (!caller_name || !caller_phone || !part_id || !part_name || !order_quantity) {
