@@ -61,4 +61,4 @@ jobs:
           app-name: 'SaskAutoParts'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2D5A4A263A1F411E8F98F6973D3F2F95 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_54DF1E6FAEDA4A39AFF3757C127CA3A2 }}
