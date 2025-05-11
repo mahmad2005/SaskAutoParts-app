@@ -90,6 +90,22 @@ app.get('/', (req, res) => {
   });
 });
 
+// Simple ping to verify server is alive
+app.get('/ping', (req, res) => {
+  res.send('✅ Server is running!');
+});
+
+// Optional: Test database connection too
+app.get('/test-db', (req, res) => {
+  pool.query('SELECT 1', (err, results) => {
+    if (err) {
+      return res.status(500).send('❌ DB connection failed: ' + err.message);
+    }
+    res.send('✅ DB connection successful!');
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
