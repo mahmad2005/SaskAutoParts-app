@@ -20,7 +20,7 @@ const pool = mysql.createPool({
 });
 
 // Main route
-/* app.get('/', (req, res) => {
+app.get('/', (req, res) => {
   const { make, model, year, page = 1 } = req.query;
   const limit = 20;
   const offset = (page - 1) * limit;
@@ -88,7 +88,7 @@ const pool = mysql.createPool({
       });
     });
   });
-}); */
+});
 
 // Simple ping to verify server is alive
 app.get('/', (req, res) => {
