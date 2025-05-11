@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
 
 
 // Add a route for order placing 
-app.post('/place-order', express.urlencoded({ extended: true }), (req, res) => {
+app.post('/api/place-order', express.urlencoded({ extended: true }), (req, res) => {
   const { caller_name, caller_phone, part_id, part_name, order_quantity } = req.body;
 
   if (!caller_name || !caller_phone || !part_id || !part_name || !order_quantity) {

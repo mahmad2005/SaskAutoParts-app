@@ -54,7 +54,7 @@
           <td><%= p.quantity %></td>
           <td><%= p.price_cad %></td>
           <td>
-            <form method="post" action="/place-order">
+            <form method="post" action="/api/place-order">
               <input type="hidden" name="part_id" value="<%= p.id %>">
               <input type="hidden" name="part_name" value="<%= p.part_name %>">
               <input type="number" name="order_quantity" min="1" max="<%= p.quantity %>" required class="form-control form-control-sm mb-1" placeholder="Qty">
