@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
+app.use(express.json()); // ✅ Enable JSON body parsing for API requests
 
 // MySQL connection pool
 const pool = mysql.createPool({
@@ -19,7 +20,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Main route
+// Main webpage route with dropdown filters and pagination
 app.get('/', (req, res) => {
   const { make, model, year, page = 1 } = req.query;
   const limit = 20;
@@ -55,7 +56,7 @@ app.get('/', (req, res) => {
   const modelQuery = 'SELECT DISTINCT car_model FROM parts';
   const yearQuery = 'SELECT DISTINCT make_year FROM parts ORDER BY make_year';
 
-  // Execute the queries sequentially
+  // Sequentially fetch dropdown values and results
   pool.query(makeQuery, (err, makes) => {
     if (err) return res.send(err);
 
@@ -90,18 +91,11 @@ app.get('/', (req, res) => {
   });
 });
 
-// Simple ping to verify server is alive
-app.get('/', (req, res) => {
-  res.send('✅ Main Page is running!');
-});
-
-
-// Simple ping to verify server is alive
+// Health and test routes
 app.get('/ping', (req, res) => {
   res.send('✅ Server is running!');
 });
 
-// Optional: Test database connection too
 app.get('/test-db', (req, res) => {
   pool.query('SELECT 1', (err, results) => {
     if (err) {
@@ -111,9 +105,8 @@ app.get('/test-db', (req, res) => {
   });
 });
 
-// API for Gemini LLM
-
-app.post('/api/parts-query', express.json(), (req, res) => {
+// ✅ Gemini / Twilio: Secure API endpoint for part lookup
+app.post('/api/parts-query', (req, res) => {
   const { car_make, car_model, make_year, part_name } = req.body;
 
   if (!car_make || !car_model || !make_year || !part_name) {
@@ -139,9 +132,6 @@ app.post('/api/parts-query', express.json(), (req, res) => {
     }
   );
 });
-
-
-
 
 app.listen(port, () => {
   console.log(`✅ Server running on port ${port}`);
